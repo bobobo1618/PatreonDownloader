@@ -86,17 +86,12 @@ namespace PatreonDownloader.PuppeteerEngine
 
             try
             {
-                _logger.Debug("Downloading browser");
-                await new BrowserFetcher().DownloadAsync(BrowserFetcher.DefaultRevision);
                 _logger.Debug("Launching browser");
-                _browser = await PuppeteerSharp.Puppeteer.LaunchAsync(new LaunchOptions
+                var options = new ConnectOptions()
                 {
-                    //Devtools = true,
-                    Headless = _headless,
-                    UserDataDir = Path.Combine(Environment.CurrentDirectory, "chromedata"),
-                    //Headless mode changes user agent so we need to force it to use "real" user agent
-                    Args = new []{ "--user-agent=\"Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/78.0.3882.0 Safari/537.36\"" }
-                });
+                    BrowserURL = "ws://127.0.0.1:9222"
+                };
+                _browser = await PuppeteerSharp.Puppeteer.ConnectAsync(options);
 
                 _logger.Debug("Opening new page");
                 Page descriptionPage = await _browser.NewPageAsync();
@@ -116,17 +111,12 @@ namespace PatreonDownloader.PuppeteerEngine
 
         public async Task CloseBrowser()
         {
-            if (_browser != null && !_browser.IsClosed)
-            {
-                await _browser.CloseAsync();
-                _browser.Dispose();
-                _browser = null;
-            }
+            return;
         }
 
         public void Dispose()
         {
-            _browser?.Dispose();
+            return;
         }
     }
 }
